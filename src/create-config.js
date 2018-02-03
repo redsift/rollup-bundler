@@ -107,7 +107,7 @@ module.exports = function(baseOptions) {
 
         configs.push(options);
 
-        if (options.format === 'es') {
+        if (options.output.format === 'es') {
             return;
         }
 
