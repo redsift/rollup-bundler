@@ -107,6 +107,10 @@ module.exports = function(baseOptions) {
 
         configs.push(options);
 
+        if (options.format === 'es') {
+            return;
+        }
+
         const minOptions = merge({}, options, {
             output: { file: _suffixPath(output.file, 'min') },
         });

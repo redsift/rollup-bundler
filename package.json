@@ -6,7 +6,7 @@
     "author": "Martin Hecher <martin@redsift.io>",
     "repository": "git@github.com:redsift/rollup-bundler.git",
     "bin": {
-        "rollup-bundler": "./index.js"
+        "rollup-bundler": "./src/index.js"
     },
     "dependencies": {
         "babel-core": "^6.26.0",
