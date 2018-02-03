@@ -1,6 +1,6 @@
 {
     "name": "@redsift/rollup-bundler",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "main": "src/index.js",
     "license": "MIT",
     "author": "Martin Hecher <martin@redsift.io>",
