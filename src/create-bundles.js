@@ -12,7 +12,7 @@ async function createBundle(config) {
     //   console.log(bundle.modules); // an array of module objects
 
     // generate code and a sourcemap
-    const { code, map } = await bundle.generate(outputOptions);
+    // const { code, map } = await bundle.generate(outputOptions);
 
     // console.log('output', JSON.stringify(outputOptions, null, 4));
 

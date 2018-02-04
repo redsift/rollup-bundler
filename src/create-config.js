@@ -8,6 +8,8 @@ const progress = require('rollup-plugin-progress');
 const cleanup = require('rollup-plugin-cleanup');
 const json = require('rollup-plugin-json');
 const minify = require('rollup-plugin-babel-minify');
+const filesize = require('rollup-plugin-filesize');
+const visualizer = require('rollup-plugin-visualizer');
 
 const _suffixPath = (p, sffx) => {
     const parts = path.parse(p);
@@ -80,6 +82,7 @@ module.exports = function(baseOptions) {
         resolve(),
         commonjs(namedExports ? { namedExports } : {}),
         cleanup(),
+        filesize(),
     ];
 
     delete baseOptions.namedExports;
@@ -108,6 +111,7 @@ module.exports = function(baseOptions) {
         configs.push(options);
 
         if (options.output.format === 'es') {
+            options.plugins.push(visualizer());
             return;
         }
 
@@ -117,6 +121,7 @@ module.exports = function(baseOptions) {
 
         minOptions.plugins = minOptions.plugins.slice(0);
         minOptions.plugins.push(minify());
+
         configs.push(minOptions);
     });
 

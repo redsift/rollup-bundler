@@ -6,7 +6,7 @@ const chalk = require('chalk');
 
 const showConfig = true;
 
-console.log(chalk.grey(`Starting bundler v${pkg.version} in ${process.cwd()}`));
+console.log(chalk.grey(`\nStarting bundler v${pkg.version} in ${process.cwd()}`));
 
 const rollupConfigFile = process.argv[2];
 
@@ -20,7 +20,7 @@ if (showConfig) {
     );
 
     if (!rollupConfigFile) {
-        console.log(chalk.grey('(zero config setup)'));
+        console.log(chalk.grey('(zero config setup)\n\n'));
     }
 }
 
