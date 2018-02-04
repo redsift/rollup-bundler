@@ -35,17 +35,27 @@ To use a different input file and/or output to a different folder create a confi
 module.exports = {
   input: `./index.js`,
   output: {
-    file: 'anotherdist/my-different-module-name.js',
-    name: 'MyDifferentModuleName',
+    file: "anotherdist/my-different-module-name.js",
+    name: "MyDifferentModuleName"
   },
-  namedExports: {
-    'node_modules/a-common-js-module-with-unsupported-export/index.min.js': [
-      'MyCustomNamedExport',
-    ],
-  },
+  pluginConfig: {
+    commonjs: {
+      namedExports: {
+        "node_modules/a-common-js-module-with-unsupported-export/index.min.js": [
+          "MyCustomNamedExport"
+        ]
+      }
+    }
+  }
 };
 ```
-The config format follows rollup's configuration for `input` and `output` fields but adds a `namedExport` field to specify custom named exports of modules where the `rollup-plugin-commonjs` plugin can't create a named export from. The syntax the same as described [here](https://github.com/rollup/rollup-plugin-commonjs#custom-named-exports). The field is used verbatim as options object for the `commonjs` rollup module.
+The config format follows rollup's configuration for `input` and `output` fields but adds a `pluginConfig` field to specify custom options for rollup plugins used by the bundler. Each named plugin key (e.g. `commonjs`) is used verbatim as options object for the respective rollup plugin. This is the list of configurable plugins:
+
+* json
+* babel
+* resolve
+* commonjs
+
 
 The above custom configuration will produce the following output:
 

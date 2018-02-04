@@ -2,6 +2,8 @@ const path = require('path');
 const merge = require('lodash.merge');
 const babel = require('rollup-plugin-babel');
 const babelHelpers = require('babel-helpers');
+const chalk = require('chalk');
+
 const commonjs = require('rollup-plugin-commonjs');
 const resolve = require('rollup-plugin-node-resolve');
 const progress = require('rollup-plugin-progress');
@@ -10,120 +12,161 @@ const json = require('rollup-plugin-json');
 const minify = require('rollup-plugin-babel-minify');
 const filesize = require('rollup-plugin-filesize');
 const visualizer = require('rollup-plugin-visualizer');
+const builtins = require('rollup-plugin-node-builtins');
+
+const zeroConfig = require('../rollup.config.zero');
+const cwd = process.cwd();
 
 const _suffixPath = (p, sffx) => {
-    const parts = path.parse(p);
-    parts.name = `${parts.name}.${sffx}`;
-    delete parts.base;
+  const parts = path.parse(p);
+  parts.name = `${parts.name}.${sffx}`;
+  delete parts.base;
 
-    return path.format(parts);
+  return path.format(parts);
 };
 
 const globalOptions = {
-    output: {
-        exports: 'named',
-    },
+  output: {
+    exports: 'named',
+  },
 };
 
-
+console.log('cwd', process.cwd());
 const babelrc = {
-    presets: [["env", {
-        "modules": false,
+  presets: [
+    [
+      // NOTE: Resolving 'env' in Babel 6 does not always work, depending on the setup. This will be fixed
+      // in Babel 7 (see https://github.com/babel/babel-preset-env/issues/186#issuecomment-297776368). Meanwhile
+      // we load the preset from the calling project as a workaround:
+      path.join(cwd, 'node_modules', 'babel-preset-env'),
+      {
+        modules: false,
         // "targets": {
         //   "browsers": ["last 1 versions"]
         // }
-      }]],
-    plugins: ['external-helpers'],
-    exclude: 'node_modules/**',
-    // NOTE: we use babel-plugin-transform-runtime to prevent clashes if 'babel-polyfill' is included via multiple bundles.
-    // Therefore runtimeHelpers has to be set: (see https://github.com/rollup/rollup-plugin-babel#helpers)
-    runtimeHelpers: true,
-    babelrc: false,
+      },
+    ],
+  ],
+  plugins: ['external-helpers'],
+  exclude: 'node_modules/**',
+  // NOTE: we use babel-plugin-transform-runtime to prevent clashes if 'babel-polyfill' is included via multiple bundles.
+  // Therefore runtimeHelpers has to be set: (see https://github.com/rollup/rollup-plugin-babel#helpers)
+  runtimeHelpers: true,
+  babelrc: false,
 };
 
 module.exports = function(baseOptions) {
-    if (!baseOptions) {
-        baseOptions = require('./zero-config');
-    }
+  if (!baseOptions) {
+    baseOptions = zeroConfig;
+  }
 
-    if (!baseOptions.input) {
-        console.log(chalk.red('\n\nConfiguration error:'));
-        console.log(chalk.red('--------------------'));
-        console.log(
-            chalk.red(
-                "\n  > You must specify an 'input' field if your entry point is different from './src/index.js'!\n\n"
-            )
-        );
+  if (!baseOptions.input) {
+    baseOptions.input = zeroConfig.input;
+  }
 
-        return;
-    }
+  if (!baseOptions.output) {
+    baseOptions.output = zeroConfig.output;
+  }
 
-    baseOptions = Object.assign(
-        { output: { file: null, name: null } },
-        baseOptions
+  if (!baseOptions.input) {
+    console.log(chalk.red('\n\nConfiguration error:'));
+    console.log(chalk.red('--------------------'));
+    console.log(
+      chalk.red(
+        "\n  > You must specify an 'input' field if your entry point is different from './src/index.js'!\n\n"
+      )
     );
 
-    if (!baseOptions.output.file) {
-        console.log(chalk.red('\n\nConfiguration error:'));
-        console.log(chalk.red('--------------------'));
-        console.log(
-            chalk.red("\n  > You have to specify an 'output.file' field!\n\n")
+    return;
+  }
+
+  baseOptions = Object.assign(
+    { output: { file: null, name: null } },
+    baseOptions
+  );
+
+  if (!baseOptions.output.file) {
+    console.log(chalk.red('\n\nConfiguration error:'));
+    console.log(chalk.red('--------------------'));
+    console.log(
+      chalk.red("\n  > You have to specify an 'output.file' field!\n\n")
+    );
+
+    return;
+  }
+
+  const {
+    pluginConfigs = {},
+    output: outputOptions,
+    input: inputOptions,
+    ...restOptions
+  } = baseOptions;
+  const {
+    json: jsonCfg,
+    babel: babelCfg,
+    resolve: resolveCfg,
+    commonjs: commonjsCfg,
+  } = pluginConfigs;
+
+  const defaultPlugins = [
+    progress(),
+    json(jsonCfg ? jsonCfg : { indent: '    ' }),
+    builtins(),
+    babel(babelCfg ? babelCfg : babelrc),
+    resolve(resolveCfg ? resolveCfg : {}),
+    commonjs(commonjsCfg ? commonjsCfg : {}),
+    cleanup(),
+    filesize(),
+  ];
+
+  // NOTE: delete non-standard field, otherwise rollup will complain:
+  delete baseOptions.pluginConfigs;
+
+  const configs = [];
+  const outputs = [
+    { format: 'umd', file: _suffixPath(outputOptions.file, 'umd') },
+    { format: 'es', file: _suffixPath(outputOptions.file, 'esm') },
+  ];
+
+  outputs.forEach(output => {
+    const options = baseOptions.plugins
+      ? merge(
+          {},
+          baseOptions,
+          globalOptions,
+          { plugins: baseOptions.plugins },
+          restOptions,
+          {
+            output,
+          }
+        )
+      : merge(
+          {},
+          baseOptions,
+          globalOptions,
+          { plugins: defaultPlugins },
+          {
+            output,
+          },
+          restOptions
         );
 
-        return;
+    configs.push(options);
+
+    if (options.output.format === 'es') {
+      options.plugins.push(visualizer());
+      return;
     }
 
-    const { namedExports } = baseOptions;
-
-    const defaultPlugins = [
-        progress(),
-        json({ indent: '    ' }),
-        babel(babelrc),
-        resolve(),
-        commonjs(namedExports ? { namedExports } : {}),
-        cleanup(),
-        filesize(),
-    ];
-
-    delete baseOptions.namedExports;
-
-    const configs = [];
-    const outputs = [
-        { format: 'umd', file: _suffixPath(baseOptions.output.file, 'umd') },
-        { format: 'es', file: _suffixPath(baseOptions.output.file, 'esm') },
-    ];
-
-    outputs.forEach(output => {
-        const options = false //baseOptions.plugins
-            ? merge({}, baseOptions, globalOptions, baseOptions.plugins, {
-                  output,
-              })
-            : merge(
-                  {},
-                  baseOptions,
-                  globalOptions,
-                  { plugins: defaultPlugins },
-                  {
-                      output,
-                  }
-              );
-
-        configs.push(options);
-
-        if (options.output.format === 'es') {
-            options.plugins.push(visualizer());
-            return;
-        }
-
-        const minOptions = merge({}, options, {
-            output: { file: _suffixPath(output.file, 'min') },
-        });
-
-        minOptions.plugins = minOptions.plugins.slice(0);
-        minOptions.plugins.push(minify());
-
-        configs.push(minOptions);
+    const minOptions = merge({}, options, {
+      output: { file: _suffixPath(output.file, 'min') },
     });
 
-    return configs;
+    minOptions.plugins = minOptions.plugins.slice(0);
+    minOptions.plugins.push(minify());
+
+    configs.push(minOptions);
+  });
+
+  return configs;
 };
