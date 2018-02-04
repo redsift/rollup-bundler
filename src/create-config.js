@@ -31,7 +31,6 @@ const globalOptions = {
   },
 };
 
-console.log('cwd', process.cwd());
 const babelrc = {
   presets: [
     [
