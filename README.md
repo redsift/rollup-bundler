@@ -9,7 +9,11 @@ yarn add --dev babel-preset-env babel-plugin-external-helpers
 
 ## Zero Config Usage
 
-This module has a 'zero config' setup. This default configuration takes `./src/index.js` as input and outputs
+This module has a 'zero config' setup which takes takes a ES5/ES2015+
+
+`./src/index.js`
+
+as input and outputs
 
 ```
 ./dist
@@ -21,11 +25,11 @@ This module has a 'zero config' setup. This default configuration takes `./src/i
 
 The `my-module` name is derived from the `package.json` `name` field.
 
-You don't need a `.babelrc` file, but `babel-preset-env` and `babel-plugin-external-helpers` need to be installed as dev dependencies.
+You don't need a `.babelrc` file, but `babel-preset-env` and `babel-plugin-external-helpers` need to be installed as (dev) dependencies.
 
 ## Custom Usage
 
-To use a different input file and/or output to a different folder you have to create a configuration file, e.g. `bundle.config.js`:
+To use a different input file and/or output to a different folder create a configuration file, e.g. `bundle.config.js`:
 
 ```js
 module.exports = {
@@ -41,10 +45,9 @@ module.exports = {
   },
 };
 ```
+The config format follows rollup's configuration for `input` and `output` fields but adds a `namedExport` field to specify custom named exports of modules where the `rollup-plugin-commonjs` plugin can't create a named export from. The syntax the same as described [here](https://github.com/rollup/rollup-plugin-commonjs#custom-named-exports). The field is used verbatim as options object for the `commonjs` rollup module.
 
-You can use the `namedExport` field to specify custom named exports from modules where the `rollup-plugin-commonjs` plugin can't create a named export from. The syntax the same as described [here](https://github.com/rollup/rollup-plugin-commonjs#custom-named-exports). The field is used verbatim as options object for the `commonjs` rollup module.
-
-The above custom configuratino will produce the following output:
+The above custom configuration will produce the following output:
 
 ```
 ./dist
@@ -53,5 +56,8 @@ The above custom configuratino will produce the following output:
 ├── anotherdist/my-different-module-name.umd.js      <--- UMD module file with ES5 syntax
 ├── anotherdist/my-different-module-name.umd.min.js  <--- minified version of the above (for the `main` field in `package.json`)
 ```
+## Bundle visualization
 
-This project is based on [rollup-config-builder](https://github.com/Donov4n/rollup-config-builder).
+The bundler creates a visual overview of the output bundle to see which packages contribute to the filesize. The output is created as `stats.html`.
+
+> This project is based on [rollup-config-builder](https://github.com/Donov4n/rollup-config-builder).
