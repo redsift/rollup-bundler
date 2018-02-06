@@ -38,7 +38,7 @@ module.exports = {
     file: "anotherdist/my-different-module-name.js",
     name: "MyDifferentModuleName"
   },
-  pluginConfig: {
+  pluginConfigs: {
     commonjs: {
       namedExports: {
         "node_modules/a-common-js-module-with-unsupported-export/index.min.js": [
