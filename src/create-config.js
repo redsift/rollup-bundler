@@ -124,6 +124,9 @@ module.exports = function(baseOptions) {
   const configs = [];
   const outputs = [
     { format: 'umd', file: _suffixPath(outputOptions.file, 'umd') },
+    // NOTE: legacy UMD name for CDN published versions. Codepen.io examples are using
+    // this filename convention when loading the bundle from the CDN:
+    { format: 'umd', file: _suffixPath(outputOptions.file, 'umd-es2015') },
     { format: 'es', file: _suffixPath(outputOptions.file, 'esm') },
   ];
 
