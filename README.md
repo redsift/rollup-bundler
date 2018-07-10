@@ -4,7 +4,7 @@
 
 ```bash
 yarn add --dev @redsift/rollup-bundler
-yarn add --dev babel-preset-env babel-plugin-external-helpers
+yarn add --dev babel-preset-env babel-plugin-external-helpers babel-runtime
 ```
 
 ## Zero Config Usage
@@ -56,7 +56,6 @@ The config format follows rollup's configuration for `input` and `output` fields
 * resolve
 * commonjs
 
-
 The above custom configuration will produce the following output:
 
 ```
@@ -66,6 +65,23 @@ The above custom configuration will produce the following output:
 ├── anotherdist/my-different-module-name.umd.js      <--- UMD module file with ES5 syntax
 ├── anotherdist/my-different-module-name.umd.min.js  <--- minified version of the above (for the `main` field in `package.json`)
 ```
+
+## Use your own `.babelrc`
+
+If the root folder of your project contains a `.babelrc` the bundler will use it. The bundler will also add the [`external-helpers`](https://github.com/rollup/rollup-plugin-babel#configuring-babel) plugin automatically to optimize the bundle.
+
+If you are experiencing erros related to the `node_modules/babel-runtime` package and are using using the `transform-runtime` plugin please make sure to disable the `helpers` option like this in your `.babelrc`:
+
+```
+{
+  "presets": ...,
+  "plugins": [
+    ["transform-runtime", { "helpers": false }],
+}
+```
+
+The optimization of the helpers will be done by the `external-helpers` plugin.
+
 ## Bundle visualization
 
 The bundler creates a visual overview of the output bundle to see which packages contribute to the filesize. The output is created as `stats.html`.

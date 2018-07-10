@@ -33,11 +33,11 @@ const globalOptions = {
   },
 };
 
-const babelrcPath = path.join(process.cwd(), '.babelrc');
+const babelrcPath = path.join(cwd, '.babelrc');
 const babelrcExists = fs.existsSync(babelrcPath);
 
 const babelrc = babelrcExists
-  ? babelrcBuilder({ path: babelrcPath, addModuleOptions: false }) // disable `addModuleOptions` as it passes { modules: false } to ALL presets, which causes an error e.g. with the `flow` preset, as it does not know the options and errors out.
+  ? babelrcBuilder({ path: babelrcPath, addModuleOptions: false, addExternalHelpersPlugin: true }) // disable `addModuleOptions` as it passes { modules: false } to ALL presets, which causes an error e.g. with the `flow` preset, as it does not know the options and errors out.
   : {
       presets: [
         [
