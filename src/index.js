@@ -4,26 +4,31 @@ const createBundles = require('./create-bundles');
 const path = require('path');
 const chalk = require('chalk');
 
-const showConfig = true;
+module.exports = function rollupBundler({
+  showConfig = true,
+  defaultRollupConfigFile = '../rollup.config.zero.js',
+}) {
+  console.log(
+    chalk.grey(`\nStarting bundler v${pkg.version} in ${process.cwd()}`)
+  );
 
-console.log(chalk.grey(`\nStarting bundler v${pkg.version} in ${process.cwd()}`));
+  const rollupConfigFile = process.argv[2];
 
-const rollupConfigFile = process.argv[2];
-
-const baseOptions = rollupConfigFile
+  const baseOptions = rollupConfigFile
     ? require(path.join(process.cwd(), rollupConfigFile))
-    : require('../rollup.config.zero.js');
+    : require(defaultRollupConfigFile);
 
-if (showConfig) {
+  if (showConfig) {
     console.log(
-        chalk.grey('\nConfiguration:', JSON.stringify(baseOptions, null, 4))
+      chalk.grey('\nConfiguration:', JSON.stringify(baseOptions, null, 4))
     );
 
     if (!rollupConfigFile) {
-        console.log(chalk.grey('(zero config setup)\n\n'));
+      console.log(chalk.grey('(zero config setup)\n\n'));
     }
-}
+  }
 
-const rollupConfig = createConfig(baseOptions);
+  const rollupConfig = createConfig(baseOptions);
 
-createBundles(rollupConfig);
+  createBundles(rollupConfig);
+};
