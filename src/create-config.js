@@ -37,7 +37,11 @@ const babelrcPath = path.join(cwd, '.babelrc');
 const babelrcExists = fs.existsSync(babelrcPath);
 
 const babelrc = babelrcExists
-  ? babelrcBuilder({ path: babelrcPath, addModuleOptions: false, addExternalHelpersPlugin: true }) // disable `addModuleOptions` as it passes { modules: false } to ALL presets, which causes an error e.g. with the `flow` preset, as it does not know the options and errors out.
+  ? babelrcBuilder({
+      path: babelrcPath,
+      addModuleOptions: false,
+      addExternalHelpersPlugin: true,
+    }) // disable `addModuleOptions` as it passes { modules: false } to ALL presets, which causes an error e.g. with the `flow` preset, as it does not know the options and errors out.
   : {
       presets: [
         [
@@ -53,7 +57,7 @@ const babelrc = babelrcExists
           },
         ],
       ],
-      plugins: ['external-helpers'],
+      plugins: ['external-helpers', ['transform-runtime', { helpers: false }]],
       exclude: 'node_modules/**',
       // NOTE: we use babel-plugin-transform-runtime to prevent clashes if 'babel-polyfill' is included via multiple bundles.
       // Therefore runtimeHelpers has to be set: (see https://github.com/rollup/rollup-plugin-babel#helpers)
@@ -135,12 +139,7 @@ module.exports = function(baseOptions, showConfig = true) {
       )
     );
 
-    console.log(
-      chalk.grey(
-        'babelrc:',
-        JSON.stringify(babelConfig, null, 4)
-      )
-    );
+    console.log(chalk.grey('babelrc:', JSON.stringify(babelConfig, null, 4)));
   }
 
   const defaultPlugins = [
