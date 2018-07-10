@@ -18,17 +18,7 @@ module.exports = function rollupBundler({
     ? require(path.join(process.cwd(), rollupConfigFile))
     : require(defaultRollupConfigFile);
 
-  if (showConfig) {
-    console.log(
-      chalk.grey('\nConfiguration:', JSON.stringify(baseOptions, null, 4))
-    );
-
-    if (!rollupConfigFile) {
-      console.log(chalk.grey('(zero config setup)\n\n'));
-    }
-  }
-
-  const rollupConfig = createConfig(baseOptions);
+  const rollupConfig = createConfig(baseOptions, showConfig);
 
   createBundles(rollupConfig);
 };

@@ -37,7 +37,7 @@ const babelrcPath = path.join(process.cwd(), '.babelrc');
 const babelrcExists = fs.existsSync(babelrcPath);
 
 const babelrc = babelrcExists
-  ? babelrcBuilder({ path: babelrcPath })
+  ? babelrcBuilder({ path: babelrcPath, addModuleOptions: false }) // disable `addModuleOptions` as it passes { modules: false } to ALL presets, which causes an error e.g. with the `flow` preset, as it does not know the options and errors out.
   : {
       presets: [
         [
@@ -65,7 +65,7 @@ if (babelrcExists) {
   console.log(chalk.grey(`\nUsing ${babelrcPath}`));
 }
 
-module.exports = function(baseOptions) {
+module.exports = function(baseOptions, showConfig = true) {
   if (!baseOptions) {
     baseOptions = zeroConfig;
   }
@@ -118,11 +118,36 @@ module.exports = function(baseOptions) {
     commonjs: commonjsCfg,
   } = pluginConfigs;
 
+  let babelConfig = babelCfg ? babelCfg : babelrc;
+
+  if (
+    babelConfig &&
+    (babelConfig.plugins.includes('transform-runtime') ||
+      babelConfig.plugins.includes('babel-plugin-transform-runtime'))
+  ) {
+    babelConfig = Object.assign(babelConfig, { runtimeHelpers: true });
+  }
+  if (showConfig) {
+    console.log(
+      chalk.grey(
+        '\nBundler configuration:',
+        JSON.stringify(baseOptions, null, 4)
+      )
+    );
+
+    console.log(
+      chalk.grey(
+        'babelrc:',
+        JSON.stringify(babelConfig, null, 4)
+      )
+    );
+  }
+
   const defaultPlugins = [
     progress(),
     json(jsonCfg ? jsonCfg : { indent: '    ' }),
     builtins(),
-    babel(babelCfg ? babelCfg : babelrc),
+    babel(babelConfig),
     resolve(resolveCfg ? resolveCfg : { jsnext: true }),
     commonjs(commonjsCfg ? commonjsCfg : {}),
     cleanup(),
