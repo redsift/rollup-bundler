@@ -1,7 +1,9 @@
 const path = require('path');
+const fs = require('fs');
 const merge = require('lodash.merge');
 const babel = require('rollup-plugin-babel');
 const babelHelpers = require('babel-helpers');
+const babelrcBuilder = require('babelrc-rollup').default;
 const chalk = require('chalk');
 
 const commonjs = require('rollup-plugin-commonjs');
@@ -31,28 +33,37 @@ const globalOptions = {
   },
 };
 
-const babelrc = {
-  presets: [
-    [
-      // NOTE: Resolving 'env' in Babel 6 does not always work, depending on the setup. This will be fixed
-      // in Babel 7 (see https://github.com/babel/babel-preset-env/issues/186#issuecomment-297776368). Meanwhile
-      // we load the preset from the calling project as a workaround:
-      path.join(cwd, 'node_modules', 'babel-preset-env'),
-      {
-        modules: false,
-        // "targets": {
-        //   "browsers": ["last 1 versions"]
-        // }
-      },
-    ],
-  ],
-  plugins: ['external-helpers'],
-  exclude: 'node_modules/**',
-  // NOTE: we use babel-plugin-transform-runtime to prevent clashes if 'babel-polyfill' is included via multiple bundles.
-  // Therefore runtimeHelpers has to be set: (see https://github.com/rollup/rollup-plugin-babel#helpers)
-  runtimeHelpers: true,
-  babelrc: false,
-};
+const babelrcPath = path.join(process.cwd(), '.babelrc');
+const babelrcExists = fs.existsSync(babelrcPath);
+
+const babelrc = babelrcExists
+  ? babelrcBuilder({ path: babelrcPath })
+  : {
+      presets: [
+        [
+          // NOTE: Resolving 'env' in Babel 6 does not always work, depending on the setup. This will be fixed
+          // in Babel 7 (see https://github.com/babel/babel-preset-env/issues/186#issuecomment-297776368). Meanwhile
+          // we load the preset from the calling project as a workaround:
+          path.join(cwd, 'node_modules', 'babel-preset-env'),
+          {
+            modules: false,
+            // "targets": {
+            //   "browsers": ["last 1 versions"]
+            // }
+          },
+        ],
+      ],
+      plugins: ['external-helpers'],
+      exclude: 'node_modules/**',
+      // NOTE: we use babel-plugin-transform-runtime to prevent clashes if 'babel-polyfill' is included via multiple bundles.
+      // Therefore runtimeHelpers has to be set: (see https://github.com/rollup/rollup-plugin-babel#helpers)
+      runtimeHelpers: true,
+      babelrc: false,
+    };
+
+if (babelrcExists) {
+  console.log(chalk.grey(`\nUsing ${babelrcPath}`));
+}
 
 module.exports = function(baseOptions) {
   if (!baseOptions) {
