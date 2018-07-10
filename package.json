@@ -1,12 +1,12 @@
 {
     "name": "@redsift/rollup-bundler",
-    "version": "0.4.0",
+    "version": "0.5.2",
     "main": "src/index.js",
     "license": "MIT",
     "author": "Martin Hecher <martin@redsift.io>",
     "repository": "git@github.com:redsift/rollup-bundler.git",
     "bin": {
-        "rollup-bundler": "./src/index.js"
+        "rollup-bundler": "./src/cli.js"
     },
     "dependencies": {
         "babel-core": "^6.26.0",
