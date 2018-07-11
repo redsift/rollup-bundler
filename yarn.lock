@@ -1760,6 +1760,10 @@ kind-of@^4.0.0:
   dependencies:
     is-buffer "^1.1.5"
 
+kleur@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/kleur/-/kleur-1.0.0.tgz#3c4f3f60172a2b20b783fa7d0294fa5724a7d7b7"
+
 level-blobs@^0.1.7:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/level-blobs/-/level-blobs-0.1.7.tgz#9ab9b97bb99f1edbf9f78a3433e21ed56386bdaf"

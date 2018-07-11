@@ -4,7 +4,7 @@ const merge = require('lodash.merge');
 const babel = require('rollup-plugin-babel');
 const babelHelpers = require('babel-helpers');
 const babelrcBuilder = require('babelrc-rollup').default;
-const chalk = require('chalk');
+const kleur = require('kleur');
 
 const commonjs = require('rollup-plugin-commonjs');
 const resolve = require('rollup-plugin-node-resolve');
@@ -75,7 +75,7 @@ const babelrc = babelrcExists
     };
 
 if (babelrcExists) {
-  console.log(chalk.grey(`\nUsing ${babelrcPath}`));
+  console.log(kleur.gray(`\nUsing ${babelrcPath}`));
 }
 
 module.exports = function(baseOptions, showConfig = true) {
@@ -92,10 +92,10 @@ module.exports = function(baseOptions, showConfig = true) {
   }
 
   if (!baseOptions.input) {
-    console.log(chalk.red('\n\nConfiguration error:'));
-    console.log(chalk.red('--------------------'));
+    console.log(kleur.red('\n\nConfiguration error:'));
+    console.log(kleur.red('--------------------'));
     console.log(
-      chalk.red(
+      kleur.red(
         "\n  > You must specify an 'input' field if your entry point is different from './src/index.js'!\n\n"
       )
     );
@@ -109,10 +109,10 @@ module.exports = function(baseOptions, showConfig = true) {
   );
 
   if (!baseOptions.output.file) {
-    console.log(chalk.red('\n\nConfiguration error:'));
-    console.log(chalk.red('--------------------'));
+    console.log(kleur.red('\n\nConfiguration error:'));
+    console.log(kleur.red('--------------------'));
     console.log(
-      chalk.red("\n  > You have to specify an 'output.file' field!\n\n")
+      kleur.red("\n  > You have to specify an 'output.file' field!\n\n")
     );
 
     return;
@@ -149,13 +149,13 @@ module.exports = function(baseOptions, showConfig = true) {
   }
   if (showConfig) {
     console.log(
-      chalk.grey(
+      kleur.gray(
         '\nBundler configuration:',
         JSON.stringify(baseOptions, null, 4)
       )
     );
 
-    console.log(chalk.grey('babelrc:', JSON.stringify(babelConfig, null, 4)));
+    console.log(kleur.gray('babelrc:', JSON.stringify(babelConfig, null, 4)));
   }
 
   const defaultPlugins = [
