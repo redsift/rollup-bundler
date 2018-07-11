@@ -39,9 +39,13 @@ const babelrcExists = fs.existsSync(babelrcPath);
 const babelrc = babelrcExists
   ? babelrcBuilder({
       path: babelrcPath,
+      // disable `addModuleOptions` as it passes { modules: false } to ALL presets,
+      // which causes an error e.g. with the `flow` preset, as it does not know the
+      // options and errors out. Make sure to pass `{ modules: false }` to the `env`
+      // plugin to allow tree-shaking.
       addModuleOptions: false,
       addExternalHelpersPlugin: true,
-    }) // disable `addModuleOptions` as it passes { modules: false } to ALL presets, which causes an error e.g. with the `flow` preset, as it does not know the options and errors out.
+    })
   : {
       presets: [
         [
@@ -57,9 +61,14 @@ const babelrc = babelrcExists
           },
         ],
       ],
+      // NOTE: we use babel-plugin-transform-runtime to prevent clashes if you include multiple bundles which
+      // use 'babel-polyfill' in a consuming app/lib.
+      // NOTE: After a lot of frustration and googling this combination of `transform-runtime` and `external-helpers`
+      // is working. Using `transform-runtime` to do the helpers part did not work (resulting in `Error: 'default' i
+      // not exported by node_modules/babel-runtime/helpers/typeof.js`). Therefore helpers are transformed via the
+      // `external-helpers` plugin.
       plugins: ['external-helpers', ['transform-runtime', { helpers: false }]],
       exclude: 'node_modules/**',
-      // NOTE: we use babel-plugin-transform-runtime to prevent clashes if 'babel-polyfill' is included via multiple bundles.
       // Therefore runtimeHelpers has to be set: (see https://github.com/rollup/rollup-plugin-babel#helpers)
       runtimeHelpers: true,
       babelrc: false,
@@ -125,9 +134,16 @@ module.exports = function(baseOptions, showConfig = true) {
   let babelConfig = babelCfg ? babelCfg : babelrc;
 
   if (
-    babelConfig &&
-    (babelConfig.plugins.includes('transform-runtime') ||
-      babelConfig.plugins.includes('babel-plugin-transform-runtime'))
+    (babelConfig &&
+      (babelConfig.plugins.includes('transform-runtime') ||
+        babelConfig.plugins.includes('babel-plugin-transform-runtime'))) ||
+    !!babelConfig.plugins.find(
+      p =>
+        Array.isArray(p) &&
+        p.length &&
+        (p[0] === 'transform-runtime' ||
+          p[0] === 'babel-plugin-transform-runtime')
+    )
   ) {
     babelConfig = Object.assign(babelConfig, { runtimeHelpers: true });
   }
