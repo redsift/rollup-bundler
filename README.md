@@ -7,6 +7,36 @@ yarn add --dev @redsift/rollup-bundler
 yarn add --dev babel-preset-env babel-plugin-external-helpers babel-runtime
 ```
 
+## Usage
+
+### Usage
+
+From the command line use either
+
+`npx rollup-bundler` for zero config usage or
+
+`npx rollup-bundler my-config-file.js` to apply a custom configuration.
+
+### `package.json`
+
+You can add the bundler to your `package.json` file with a script like this (name is arbitrary):
+
+```
+"scripts": {
+  ...
+  "build": "rollup-bundler"
+}
+```
+
+or with a custom configuration:
+
+```
+"scripts": {
+  ...
+  "build": "rollup-bundler my-config-file.js"
+}
+```
+
 ## Zero Config Usage
 
 This module has a 'zero config' setup which takes takes a ES5/ES2015+
