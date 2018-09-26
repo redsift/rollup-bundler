@@ -9,7 +9,7 @@ yarn add --dev babel-preset-env babel-plugin-external-helpers babel-runtime
 
 ## Usage
 
-### Usage
+### CLI
 
 From the command line use either
 
