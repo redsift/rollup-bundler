@@ -3,8 +3,7 @@
 ## Installation
 
 ```bash
-yarn add --dev @redsift/rollup-bundler
-yarn add --dev babel-preset-env babel-plugin-external-helpers babel-runtime
+yarn add --dev @redsift/rollup-bundler @babel/runtime
 ```
 
 ## Usage
