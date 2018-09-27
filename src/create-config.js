@@ -2,7 +2,6 @@ const path = require('path');
 const fs = require('fs');
 const merge = require('lodash.merge');
 const babel = require('rollup-plugin-babel');
-const babelHelpers = require('babel-helpers');
 const babelrcBuilder = require('babelrc-rollup').default;
 const kleur = require('kleur');
 
@@ -44,7 +43,7 @@ const babelrc = babelrcExists
       // options and errors out. Make sure to pass `{ modules: false }` to the `env`
       // plugin to allow tree-shaking.
       addModuleOptions: false,
-      addExternalHelpersPlugin: true,
+      // addExternalHelpersPlugin: true,
     })
   : {
       presets: [
@@ -52,7 +51,8 @@ const babelrc = babelrcExists
           // NOTE: Resolving 'env' in Babel 6 does not always work, depending on the setup. This will be fixed
           // in Babel 7 (see https://github.com/babel/babel-preset-env/issues/186#issuecomment-297776368). Meanwhile
           // we load the preset from the calling project as a workaround:
-          path.join(cwd, 'node_modules', 'babel-preset-env'),
+          // path.join(cwd, 'node_modules', '@babel/preset-env'),
+          '@babel/preset-env',
           {
             modules: false,
             // "targets": {
@@ -67,7 +67,7 @@ const babelrc = babelrcExists
       // is working. Using `transform-runtime` to do the helpers part did not work (resulting in `Error: 'default' i
       // not exported by node_modules/babel-runtime/helpers/typeof.js`). Therefore helpers are transformed via the
       // `external-helpers` plugin.
-      plugins: ['external-helpers', ['transform-runtime', { helpers: false }]],
+      plugins: ['@babel/plugin-transform-runtime'],
       exclude: 'node_modules/**',
       // Therefore runtimeHelpers has to be set: (see https://github.com/rollup/rollup-plugin-babel#helpers)
       runtimeHelpers: true,
@@ -135,14 +135,14 @@ module.exports = function(baseOptions, showConfig = true) {
 
   if (
     (babelConfig &&
-      (babelConfig.plugins.includes('transform-runtime') ||
-        babelConfig.plugins.includes('babel-plugin-transform-runtime'))) ||
+      (babelConfig.plugins.includes('@babel/plugin-transform-runtime') ||
+        babelConfig.plugins.includes('@babel/plugin-transform-runtime'))) ||
     !!babelConfig.plugins.find(
       p =>
         Array.isArray(p) &&
         p.length &&
-        (p[0] === 'transform-runtime' ||
-          p[0] === 'babel-plugin-transform-runtime')
+        (p[0] === '@babel/plugin-transform-runtime' ||
+          p[0] === '@babel/plugin-transform-runtime')
     )
   ) {
     babelConfig = Object.assign(babelConfig, { runtimeHelpers: true });
@@ -177,7 +177,7 @@ module.exports = function(baseOptions, showConfig = true) {
     { format: 'umd', file: _suffixPath(outputOptions.file, 'umd') },
     // NOTE: legacy UMD name for CDN published versions. Codepen.io examples are using
     // this filename convention when loading the bundle from the CDN:
-    { format: 'umd', file: _suffixPath(outputOptions.file, 'umd-es2015') },
+    // { format: 'umd', file: _suffixPath(outputOptions.file, 'umd-es2015') },
     { format: 'es', file: _suffixPath(outputOptions.file, 'esm') },
   ];
 
