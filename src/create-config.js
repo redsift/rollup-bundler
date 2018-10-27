@@ -43,7 +43,7 @@ const babelrc = babelrcExists
       // options and errors out. Make sure to pass `{ modules: false }` to the `env`
       // plugin to allow tree-shaking.
       addModuleOptions: false,
-      // addExternalHelpersPlugin: true,
+      addExternalHelpersPlugin: false,
     })
   : {
       presets: [
@@ -67,7 +67,10 @@ const babelrc = babelrcExists
       // is working. Using `transform-runtime` to do the helpers part did not work (resulting in `Error: 'default' i
       // not exported by node_modules/babel-runtime/helpers/typeof.js`). Therefore helpers are transformed via the
       // `external-helpers` plugin.
-      plugins: ['@babel/plugin-transform-runtime'],
+      plugins: [
+        '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-transform-runtime',
+      ],
       exclude: 'node_modules/**',
       // Therefore runtimeHelpers has to be set: (see https://github.com/rollup/rollup-plugin-babel#helpers)
       runtimeHelpers: true,
