@@ -105,7 +105,8 @@ If you are experiencing erros related to the `node_modules/babel-runtime` packag
 {
   "presets": ...,
   "plugins": [
-    ["transform-runtime", { "helpers": false }],
+    ["@babel/transform-runtime", { "helpers": false }]
+  ]
 }
 ```
 
