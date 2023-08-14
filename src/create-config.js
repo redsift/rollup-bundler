@@ -12,7 +12,7 @@ const cleanup = require('rollup-plugin-cleanup');
 const json = require('rollup-plugin-json');
 const minify = require('rollup-plugin-babel-minify');
 const filesize = require('rollup-plugin-filesize');
-const visualizer = require('rollup-plugin-visualizer');
+const { visualizer } = require('rollup-plugin-visualizer');
 const builtins = require('rollup-plugin-node-builtins');
 
 const zeroConfig = require('../rollup.config.zero');

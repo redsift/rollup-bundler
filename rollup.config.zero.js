@@ -1,5 +1,5 @@
 const path = require('path');
-const pascalCase = require('pascal-case');
+const { pascalCase } = require('pascal-case');
 const chalk = require('chalk');
 
 const cwd = process.cwd();

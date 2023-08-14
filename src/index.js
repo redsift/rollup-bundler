@@ -5,7 +5,7 @@ const path = require('path');
 const kleur = require('kleur');
 
 console.log(
-  kleur.yellow.underline(`\nIf you are calling the bundler via the src/index.js file please see https://github.com/redsift/rollup-bundler#usage on how to use it correctly. src/index.js support is discontinued.`)
+  kleur.underline().yellow(`\nIf you are calling the bundler via the src/index.js file please see https://github.com/redsift/rollup-bundler#usage on how to use it correctly. src/index.js support is discontinued.`)
 );
 
 module.exports = function rollupBundler({
