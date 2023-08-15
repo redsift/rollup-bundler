@@ -162,7 +162,8 @@ module.exports = function(baseOptions, showConfig = true) {
   }
 
   const defaultPlugins = [
-    progress(),
+    // TODO: fix and re-enable
+    // progress(),
     json(jsonCfg ? jsonCfg : { indent: '    ' }),
     builtins(),
     babel(babelConfig),
