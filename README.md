@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-npm install @redsift/rollup-bundler @babel/runtime -D
+yarn add --dev @redsift/rollup-bundler @babel/runtime
 ```
 
 ## Usage
