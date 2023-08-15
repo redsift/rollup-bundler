@@ -1,6 +1,6 @@
 {
     "name": "@redsift/rollup-bundler",
-    "version": "0.7.2",
+    "version": "2.0.3",
     "main": "src/index.js",
     "license": "MIT",
     "author": "Martin Hecher <martin@redsift.io>",
@@ -24,13 +24,16 @@
         "rollup": "^0.68.2",
         "rollup-plugin-babel": "^4.3.3",
         "rollup-plugin-babel-minify": "^6.1.1",
-        "rollup-plugin-cleanup": "^3.0.0",
+        "rollup-plugin-cleanup": "3.0.0",
         "rollup-plugin-commonjs": "^9.2.0",
-        "rollup-plugin-filesize": "^5.0.1",
+        "rollup-plugin-filesize": "^10.0.0",
         "rollup-plugin-json": "^3.1.0",
         "rollup-plugin-node-builtins": "^2.1.2",
         "rollup-plugin-node-resolve": "^3.4.0",
         "rollup-plugin-progress": "^0.4.0",
         "rollup-plugin-visualizer": "^0.9.2"
+    },
+    "overrides": {
+        "semver": "6.3.1"
     }
 }
