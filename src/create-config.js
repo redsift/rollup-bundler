@@ -167,7 +167,7 @@ module.exports = function(baseOptions, showConfig = true) {
     json(jsonCfg ? jsonCfg : { indent: '    ' }),
     builtins(),
     babel(babelConfig),
-    resolve(resolveCfg ? resolveCfg : { jsnext: true }),
+    resolve(resolveCfg ? resolveCfg : { jsnext: true, preferBuiltins: false }),
     commonjs(commonjsCfg ? commonjsCfg : {}),
     cleanup(),
     filesize(),
